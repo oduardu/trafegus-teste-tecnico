@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: trafegus-db
+    environment:
+      POSTGRES_USER: trafegus
+      POSTGRES_PASSWORD: trafegus
+      POSTGRES_DB: drivers
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
