@@ -10,7 +10,7 @@ use Doctrine\ORM\EntityManager;
  * @ORM\Entity
  * @ORM\Table(name="drivers")
  */
-class Drivers extends AbstractModel
+class Drivers
 {
     /**
      * @ORM\Id
@@ -33,38 +33,42 @@ class Drivers extends AbstractModel
      */
     protected $telefone;
 
-    public function __construct(EntityManager $entityManager, array $data = null)
-    {
-        parent::__construct($entityManager, self::class);
+    private $entityManager;
 
-        if (!empty($data)) {
-            $this->setData($data);
+    public function __construct(EntityManager $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+    public function find($id)
+    {
+        if (empty($id)) {
+            throw new \InvalidArgumentException("ID cannot be empty");
         }
+        return $this->entityManager->find(self::class, $id);
     }
 
-    public function getDrivers()
+    public function fetchAll()
     {
-        return $this->findAll();
+        return $this->entityManager->getRepository(self::class)->findAll();
     }
 
-    public function getDriver($id)
+    public function save($entity)
     {
-        return $this->find($id);
+        if (empty($entity)) {
+            throw new \InvalidArgumentException("Entity cannot be empty");
+        }
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush();
     }
 
-    public function saveDriver($driver)
+    public function delete($entity)
     {
-        $this->save($driver);
-    }
-
-    public function removeDriver($driver)
-    {
-        $this->remove($driver);
-    }
-
-    public function toArrayDriver($driver)
-    {
-        return $this->toArray($driver);
+        if (empty($entity)) {
+            throw new \InvalidArgumentException("Entity cannot be empty");
+        }
+        $this->entityManager->remove($entity);
+        $this->entityManager->flush();
     }
 
     public function setData(array $data)
