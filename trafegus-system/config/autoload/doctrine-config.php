@@ -2,15 +2,9 @@
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 
-// Caminho para as entidades
-$paths = [__DIR__ . '/src/Entity'];
+$paths = [__DIR__ . '/../../module/Application/src/Application/Model'];
 $isDevMode = true;
 
-//      POSTGRES_USER: trafegus
-//      POSTGRES_PASSWORD: trafegus
-//      POSTGRES_DB: drivers
-
-// Configuração do banco de dados
 $dbParams = [
     'driver'   => 'pdo_pgsql',
     'user'     => 'trafegus',
