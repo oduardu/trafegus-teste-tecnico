@@ -74,5 +74,17 @@ return array(
             ),
         ),
     ),
-    //doctrine
+    'doctrine' => [
+        'driver' => [
+            'application_entities' => [
+                'class' => \Doctrine\ORM\Mapping\Driver\AnnotationDriver::class,
+                'paths' => [__DIR__ . '/../src/Application/Model']
+            ],
+            'orm_default' => [
+                'drivers' => [
+                    'Application\Model' => 'application_entities'
+                ]
+            ]
+        ]
+    ]
 );

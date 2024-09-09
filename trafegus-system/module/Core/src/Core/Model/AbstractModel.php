@@ -1,11 +1,12 @@
 <?php
 
-namespace Application\Model;
+namespace Core\Model;
 
+use Core\Interfaces\Model\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
-abstract class Model implements ModelInterface
+abstract class AbstractModel implements ModelInterface
 {
     /**
      * @var EntityManager

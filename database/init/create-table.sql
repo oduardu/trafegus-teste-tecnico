@@ -8,7 +8,7 @@ CREATE TABLE drivers (
 
 CREATE TABLE vehicles (
       placa VARCHAR(7) NOT NULL UNIQUE,
-      renavam VARCHAR(30) NOT NULL UNIQUE,
+      renavam VARCHAR(30) UNIQUE,
       modelo VARCHAR(20) NOT NULL,
       marca VARCHAR(20) NOT NULL,
       ano INTEGER NOT NULL,
@@ -18,8 +18,8 @@ CREATE TABLE vehicles (
 
 CREATE TABLE driver_vehicle (
     driver_cpf CHAR(11) NOT NULL,
-    vehicle_renavam VARCHAR(30) NOT NULL,
-    PRIMARY KEY (driver_cpf, vehicle_renavam),
+    vehicle_placa VARCHAR(30) NOT NULL,
+    PRIMARY KEY (driver_cpf, vehicle_placa),
     FOREIGN KEY (driver_cpf) REFERENCES drivers(cpf),
-    FOREIGN KEY (vehicle_renavam) REFERENCES vehicles(renavam)
+    FOREIGN KEY (vehicle_placa) REFERENCES vehicles(placa)
 );
