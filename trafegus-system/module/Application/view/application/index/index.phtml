@@ -1,1 +1,123 @@
-<h1>Teste </h1>
+<div id="map" style="height: 100%;"></div>
+
+<div class="position-absolute rounded-sm bg-light py-2 px-4" style="top: 12%; left: 50%; transform: translateX(-50%); z-index: 1000; pointer-events: none">
+    <span>Nossos Motoristas</span>
+</div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBYgCgLY0gsGd_VJTkJxUCZi7yfvtYiHF8&callback=initMap&v=weekly" async defer></script>
+<script>
+    function getRandomLocation() {
+        const lat = Math.random() * (27.0 - 25.8) + 25.8;
+        const lng = Math.random() * (52.7 - 51.6) + 51.6;
+        return { lat: -lat, lng: -lng };
+    }
+
+    function getRandomName() {
+        const names = ['João Silva', 'Maria Oliveira', 'Pedro Souza', 'Ana Santos', 'Carlos Pereira', 'Fernanda Lima'];
+        return names[Math.floor(Math.random() * names.length)];
+    }
+
+    function getRandomPlate() {
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const numbers = '0123456789';
+        let plate = '';
+        for (let i = 0; i < 3; i++) {
+            plate += letters.charAt(Math.floor(Math.random() * letters.length));
+        }
+        plate += '-';
+        for (let i = 0; i < 4; i++) {
+            plate += numbers.charAt(Math.floor(Math.random() * numbers.length));
+        }
+        return plate;
+    }
+
+    function getRandomVehicle() {
+        const models = ['Civic', 'Corolla', 'Fiesta', 'Golf', 'Palio', 'Uno'];
+        const brands = ['Honda', 'Toyota', 'Ford', 'Volkswagen', 'Fiat'];
+
+        const model = models[Math.floor(Math.random() * models.length)];
+        const brand = brands[Math.floor(Math.random() * brands.length)];
+
+        return `${brand} ${model}`;
+    }
+
+    function initMap() {
+        const map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 8,
+            center: { lat: -27.096, lng: -52.618 },
+            streetViewControl: false,
+            mapTypeControl: false,
+        });
+
+
+        <?php
+            if(!empty($this->drivers)):
+                foreach($this->drivers as $driver) {
+                    echo "const marker = new google.maps.Marker({
+                        position: { ...getRandomLocation() },
+                        map: map,
+                        title: '$driver->getPlaca()',
+                    });
+
+                    const infowindow = new google.maps.InfoWindow({
+                        content: `<div><strong>Placa:</strong> $driver->getPlaca()<br><strong>Motorista:</strong> $driver->getNome()</div>`,
+                    });
+
+                    marker.addListener('click', () => {
+                        infowindow.open({
+                            anchor: marker,
+                            map,
+                        });
+                    });";
+            } else:
+        ?>
+        const vehicles = Array.from({ length: 6 }, () => ({
+            ...getRandomLocation(),
+            placa: getRandomPlate(),
+            nome: getRandomName(),
+            veiculo: getRandomVehicle(),
+        }));
+
+        vehicles.forEach(vehicle => {
+            const marker = new google.maps.Marker({
+                position: { lat: vehicle.lat, lng: vehicle.lng },
+                map: map,
+                title: vehicle.placa,
+            });
+
+            const infowindow = new google.maps.InfoWindow({
+                content: `<div>
+                        <img src="https://img.freepik.com/free-photo/classic-portrait-silhouette-man_23-2149707045.jpg?size=626&ext=jpg&ga=GA1.1.2008272138.1725926400&semt=ais_hybrid" class="vehicle-image" />
+                        <br>
+                        <strong>Placa:</strong>
+                        ${vehicle.placa}<br>
+                        <strong>Motorista:</strong>
+                        ${vehicle.nome}
+                        <br>
+                       <strong>Veículo:</strong> ${vehicle.veiculo}
+                    </div>`,
+            });
+
+            marker.addListener("click", () => {
+                infowindow.open({
+                    anchor: marker,
+                    map,
+                });
+            });
+        });
+
+        <?php endif; ?>
+    }
+
+    window.initMap = initMap;
+</script>
+<style>
+    .vehicle-image {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        object-fit: cover;
+        display: block;
+        margin: 0 auto;
+    }
+</style>
