@@ -1,79 +1,118 @@
 <?php
-/**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
 
 namespace Application;
 
 use Zend\Mvc\Router\Http\Segment;
 
-return array(
-    'router' => array(
-        'routes' => array(
-            'home' => array(
+return [
+    'router' => [
+        'routes' => [
+            'home' => [
                 'type' => Segment::class,
-                'options' => array(
+                'options' => [
                     'route'    => '/[:controller[/:action]]',
-                    'constraints' => array(
+                    'constraints' => [
                         'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-                    ),
-                    'defaults' => array(
-                        'controller' => 'Application\Controller\Index',
+                    ],
+                    'defaults' => [
+                        'controller' => \Application\Controller\IndexController::class,
                         'action'     => 'index',
-                    ),
-                ),
-            ),
-        ),
-    ),
-    'service_manager' => array(
-        'abstract_factories' => array(
+                    ],
+                ],
+            ],
+            'vehicles' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route'    => '/vehicles[/:action]',
+                    'constraints' => [
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                    ],
+                    'defaults' => [
+                        'controller' => \Application\Controller\VehiclesController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+            ],
+            'drivers' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route'    => '/drivers[/:action[/:params]]',
+                    'constraints' => [
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'params' => '.*',
+                    ],
+                    'defaults' => [
+                        'controller' => \Application\Controller\DriversController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+            ],
+        ],
+    ],
+    'service_manager' => [
+        'abstract_factories' => [
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
             'Zend\Log\LoggerAbstractServiceFactory',
-        ),
-    ),
-    'translator' => array(
+        ],
+        'factories' => [
+            \Application\Service\DriverService::class => \Application\Factory\DriverServiceFactory::class,
+            \Application\Service\VehicleService::class => \Application\Factory\VehicleServiceFactory::class,
+        ],
+    ],
+    'translator' => [
         'locale' => 'en_US',
-        'translation_file_patterns' => array(
-            array(
+        'translation_file_patterns' => [
+            [
                 'type'     => 'gettext',
                 'base_dir' => __DIR__ . '/../language',
                 'pattern'  => '%s.mo',
-            ),
-        ),
-    ),
-    'controllers' => array(
-        'invokables' => array(
-            'Application\Controller\Index' => Controller\IndexController::class,
-        ),
-    ),
-    'view_manager' => array(
+            ],
+        ],
+    ],
+    'controllers' => [
+        'factories' => [
+            \Application\Controller\IndexController::class => function($container) {
+                $parentLocator = $container->getServiceLocator();
+                return new \Application\Controller\IndexController(
+                    $parentLocator->get(\Doctrine\ORM\EntityManager::class)
+                );
+            },
+            \Application\Controller\VehiclesController::class => function($container) {
+                $parentLocator = $container->getServiceLocator();
+                return new \Application\Controller\VehiclesController(
+                    $parentLocator->get(\Doctrine\ORM\EntityManager::class)
+                );
+            },
+            \Application\Controller\DriversController::class => function($container) {
+                $parentLocator = $container->getServiceLocator();
+                return new \Application\Controller\DriversController(
+                    $parentLocator->get(\Doctrine\ORM\EntityManager::class)
+                );
+            },
+        ]
+    ],
+    'view_manager' => [
         'display_not_found_reason' => true,
         'display_exceptions'       => true,
         'doctype'                  => 'HTML5',
         'not_found_template'       => 'error/404',
         'exception_template'       => 'error/index',
-        'template_map' => array(
+        'template_map' => [
             'layout/layout'           => __DIR__ . '/../view/layout/layout.phtml',
             'application/index/index' => __DIR__ . '/../view/application/index/index.phtml',
             'error/404'               => __DIR__ . '/../view/error/404.phtml',
             'error/index'             => __DIR__ . '/../view/error/index.phtml',
-        ),
-        'template_path_stack' => array(
+        ],
+        'template_path_stack' => [
             __DIR__ . '/../view',
-        ),
-    ),
-    // Placeholder for console routes
-    'console' => array(
-        'router' => array(
-            'routes' => array(
-            ),
-        ),
-    ),
+        ],
+    ],
+    'console' => [
+        'router' => [
+            'routes' => [],
+        ],
+    ],
     'doctrine' => [
         'driver' => [
             'application_entities' => [
@@ -87,4 +126,4 @@ return array(
             ]
         ]
     ]
-);
+];
