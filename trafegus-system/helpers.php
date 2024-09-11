@@ -3,16 +3,7 @@
 use Zend\View\Model\ViewModel;
 
 if (!function_exists('viewModel')) {
-    /**
-     * Return instance of ViewModel
-     *
-     * @param string|null $template
-     * @param array|null $variables
-     *
-     * @return ViewModel
-     *
-     */
-    function viewModel($template = null, $variables = null)
+      function viewModel($template = null, $variables = null)
     {
         $viewModel = new ViewModel();
 
@@ -25,5 +16,25 @@ if (!function_exists('viewModel')) {
         }
 
         return $viewModel;
+    }
+}
+
+if (!function_exists('debug')) {
+    function debug($data)
+    {
+        echo "<small> " . debug_backtrace(0)[0]['file'] . ":" . debug_backtrace(0)[0]['line'] . "</small>";
+        echo '<pre>';
+        if (is_object($data)) {
+            $data = (array)$data;
+        }
+
+        if (is_array($data)) {
+            print_r($data);
+        } else {
+            var_dump($data);
+        }
+
+        echo '</pre>';
+        exit;
     }
 }
