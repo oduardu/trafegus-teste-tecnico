@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Interface\Service;
+namespace Core\Interfaces\Service;
 
 interface CrudServiceInterface
 {
@@ -20,10 +20,10 @@ interface CrudServiceInterface
 
     /**
      * Save a record
-     * @param $entity
+     * @param $data
      * @return array
      */
-    public function save($entity);
+    public function save($data);
 
     /**
      * Remove a record
