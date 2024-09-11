@@ -3,8 +3,6 @@
 namespace Application\Model;
 
 use Doctrine\ORM\Mapping as ORM;
-use Core\Model\AbstractModel;
-use Doctrine\ORM\EntityManager;
 
 /**
  * @ORM\Entity
@@ -33,53 +31,49 @@ class Drivers
      */
     protected $telefone;
 
-    private $entityManager;
-
-    public function __construct(EntityManager $entityManager)
+    public function getCpf()
     {
-        $this->entityManager = $entityManager;
+        return $this->cpf;
     }
 
-    public function find($id)
+    public function getRg()
     {
-        if (empty($id)) {
-            throw new \InvalidArgumentException("ID cannot be empty");
-        }
-        return $this->entityManager->find(self::class, $id);
+        return $this->rg;
     }
 
-    public function fetchAll()
+    public function getNome()
     {
-        return $this->entityManager->getRepository(self::class)->findAll();
+        return $this->nome;
     }
 
-    public function save($entity)
+    public function getTelefone()
     {
-        if (empty($entity)) {
-            throw new \InvalidArgumentException("Entity cannot be empty");
-        }
-        $this->entityManager->persist($entity);
-        $this->entityManager->flush();
+        return $this->telefone;
     }
 
-    public function delete($entity)
+    public function setCpf($cpf)
     {
-        if (empty($entity)) {
-            throw new \InvalidArgumentException("Entity cannot be empty");
-        }
-        $this->entityManager->remove($entity);
-        $this->entityManager->flush();
+        $this->cpf = $cpf;
     }
 
-    public function setData(array $data)
+    public function setRg($rg)
     {
-        if(empty($data['cpf']) || empty($data['rg']) || empty($data['nome'])) {
-            throw new \InvalidArgumentException("Parâmetros inválidos");
-        }
-
-        $this->cpf = $data['cpf'];
-        $this->rg = $data['rg'];
-        $this->nome = $data['nome'];
-        $this->telefone = $data['telefone'];
+        $this->rg = $rg;
     }
+
+    public function setNome($nome)
+    {
+        $this->nome = $nome;
+    }
+
+    public function setTelefone($telefone)
+    {
+        $this->telefone = $telefone;
+    }
+
+    public function toArr()
+    {
+        return get_object_vars($this);
+    }
+
 }
