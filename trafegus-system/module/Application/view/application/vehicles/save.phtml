@@ -1,0 +1,61 @@
+<div class="container">
+    <h1 class="text-center mb-4">Cadastrar Veículo</h1>
+    <form id="vehicleForm" method="post" action="/vehicles/save">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="placa">Placa</label>
+                <input type="text" class="form-control" id="placa" name="placa" required>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="renavam">Renavam</label>
+                <input type="text" class="form-control" id="renavam" name="renavam" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="modelo">Modelo</label>
+                <input type="text" class="form-control" id="modelo" name="modelo" required>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="marca">Marca</label>
+                <input type="text" class="form-control" id="marca" name="marca" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="ano">Ano</label>
+                <input type="number" class="form-control" id="ano" name="ano" min="0" required>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="cor">Cor</label>
+                <input type="text" class="form-control" id="cor" name="cor" required>
+            </div>
+            <div class="form-group col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-success w-100">Salvar</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    jQuery(document).ready(function() {
+        jQuery('#vehicleForm').on('submit', function(event) {
+            event.preventDefault();
+            jQuery.ajax({
+                url: $(this).attr('action'),
+                method: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        alert('Veículo salvo com sucesso!');
+                    } else {
+                        alert('Erro ao salvar veículo: ' + response.message);
+                    }
+                },
+                error: function() {
+                    alert('Erro ao processar a solicitação.');
+                }
+            });
+        });
+    });
+</script>
