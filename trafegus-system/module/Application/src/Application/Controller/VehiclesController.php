@@ -8,19 +8,7 @@ class VehiclesController extends DefaultController
 {
     public function indexAction()
     {
-//        $vehicles = $this->getService(\Application\Service\VehicleService::class)->searchVehiclesInfo();
-
-        if (!$vehicles['success']) {
-            $vehicles = [[
-                'placa' => 'ABC1234',
-                'modelo' => 'Gol',
-                'marca' => 'Volkswagen',
-                'ano' => '2010',
-                'renavam' => '123456789',
-                'cor' => 'Preto',
-                'drivers' =>  'João da Silva',
-            ]];
-        }
+        $vehicles = $this->getService(\Application\Service\VehicleService::class)->searchVehiclesInfo();
 
         return viewModel(null, [
             'vehicles' => $vehicles
@@ -29,10 +17,10 @@ class VehiclesController extends DefaultController
 
     public function saveAction()
     {
-        $placa = $this->params()->fromRoute('placa', null);
+        $placa = $this->getRequest()->getQuery('placa');
 
         if (!empty($placa)) {
-            $vehicle = $this->getService(\Application\Service\VehicleService::class)->find($placa);
+            $vehicle = $this->getService(\Application\Service\VehicleService::class)->find($placa, true);
 
             if (isset($vehicle['success']) && !$vehicle['success']) {
                 return $this->resJson($vehicle);

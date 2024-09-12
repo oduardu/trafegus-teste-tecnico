@@ -32,7 +32,7 @@ class Vehicles
     protected $marca;
 
     /**
-     * @ORM\Column(type="int", nullable=false)
+     * @ORM\Column(type="decimal", nullable=false)
      */
     protected $ano;
 
@@ -101,4 +101,8 @@ class Vehicles
         $this->cor = $cor;
     }
 
+    public function toArr()
+    {
+        return get_object_vars($this);
+    }
 }
