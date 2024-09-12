@@ -18,15 +18,12 @@ class IndexController extends DefaultController
 
     public function indexAction()
     {
-//        $response = $this->getService(\Application\Service\DriverService::class)->save([
-//            'nome' => 'Eduardo Pazzini Zancanaro',
-//            'cpf' => '09379348959',
-//            'rg' => '116753808',
-//            'telefone' => '49991861581',
-//        ]);
-//
-//        return $this->resJson($response);
+        $drivers = $this->getService(\Application\Service\BondVehiclesAndDrivers::class)->findAllBondWithInfo();
+        $config = $this->getService('Configuration');
 
-        return viewModel();
+        return viewModel(null, [
+            'drivers' => $drivers,
+            'key' => $config['API_GOOGLE_KEY']
+        ]);
     }
 }
