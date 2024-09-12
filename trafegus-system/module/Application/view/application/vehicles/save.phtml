@@ -4,31 +4,32 @@
         <div class="form-row">
             <div class="form-group col-md-6">
                 <label for="placa">Placa</label>
-                <input type="text" class="form-control" id="placa" name="placa" required>
+                <input id="placa" class="form-control" name="placa" value="<?php echo $this->vehicle['placa'] ?>" <?php echo (isset($this->vehicle)) ? 'type="hidden"' : 'type="text"' ?> required>
+                <p id="placa"><?php echo $this->vehicle['placa'] ?></p>
             </div>
             <div class="form-group col-md-6">
                 <label for="renavam">Renavam</label>
-                <input type="text" class="form-control" id="renavam" name="renavam" required>
+                <input type="text" class="form-control" id="renavam" name="renavam" value="<?php echo $this->vehicle['renavam'] ?>">
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-6">
                 <label for="modelo">Modelo</label>
-                <input type="text" class="form-control" id="modelo" name="modelo" required>
+                <input type="text" class="form-control" id="modelo" name="modelo" value="<?php echo $this->vehicle['modelo'] ?>" required>
             </div>
             <div class="form-group col-md-6">
                 <label for="marca">Marca</label>
-                <input type="text" class="form-control" id="marca" name="marca" required>
+                <input type="text" class="form-control" id="marca" name="marca" value="<?php echo $this->vehicle['marca'] ?>" required>
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-4">
                 <label for="ano">Ano</label>
-                <input type="number" class="form-control" id="ano" name="ano" min="0" required>
+                <input type="number" class="form-control" id="ano" name="ano" min="0" value="<?php echo $this->vehicle['ano'] ?>" required>
             </div>
             <div class="form-group col-md-4">
                 <label for="cor">Cor</label>
-                <input type="text" class="form-control" id="cor" name="cor" required>
+                <input type="text" class="form-control" id="cor" name="cor" value="<?php echo $this->vehicle['cor'] ?>" required>
             </div>
             <div class="form-group col-md-4 d-flex align-items-end">
                 <button type="submit" class="btn btn-success w-100">Salvar</button>
@@ -36,26 +37,4 @@
         </div>
     </form>
 </div>
-
-<script>
-    jQuery(document).ready(function() {
-        jQuery('#vehicleForm').on('submit', function(event) {
-            event.preventDefault();
-            jQuery.ajax({
-                url: $(this).attr('action'),
-                method: 'POST',
-                data: $(this).serialize(),
-                success: function(response) {
-                    if (response.success) {
-                        alert('Veículo salvo com sucesso!');
-                    } else {
-                        alert('Erro ao salvar veículo: ' + response.message);
-                    }
-                },
-                error: function() {
-                    alert('Erro ao processar a solicitação.');
-                }
-            });
-        });
-    });
-</script>
+<script src="/js/application/vehicles/save.js"></script>

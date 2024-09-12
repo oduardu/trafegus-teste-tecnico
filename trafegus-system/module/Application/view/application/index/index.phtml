@@ -4,7 +4,7 @@
     <span>Nossos Motoristas</span>
 </div>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBYgCgLY0gsGd_VJTkJxUCZi7yfvtYiHF8&callback=initMap&v=weekly" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=<?php echo $this->key; ?>&callback=initMap&v=weekly" async defer></script>
 <script>
     function getRandomLocation() {
         const lat = Math.random() * (27.0 - 25.8) + 25.8;
@@ -51,32 +51,26 @@
 
 
         <?php
-            if(!empty($this->drivers)):
-                foreach($this->drivers as $driver) {
-                    echo "const marker = new google.maps.Marker({
-                        position: { ...getRandomLocation() },
-                        map: map,
-                        title: '$driver->getPlaca()',
-                    });
-
-                    const infowindow = new google.maps.InfoWindow({
-                        content: `<div><strong>Placa:</strong> $driver->getPlaca()<br><strong>Motorista:</strong> $driver->getNome()</div>`,
-                    });
-
-                    marker.addListener('click', () => {
-                        infowindow.open({
-                            anchor: marker,
-                            map,
-                        });
-                    });";
-            } else:
-        ?>
-        const vehicles = Array.from({ length: 6 }, () => ({
+            if(!empty($this->drivers)): ?>
+        let vehicles = [
+            <?php foreach($this->drivers as $driver): ?>
+                {
+                    ...getRandomLocation(),
+                    placa: '<?php echo $driver['placa'] ?>',
+                    nome: '<?php echo $driver['nome'] ?>',
+                    veiculo: '<?php echo "{$driver['marca']}  {$driver['modelo']}" ?>',
+                },
+            <?php endforeach; ?>
+        ];
+        console.log(vehicles);
+        <?php else: ?>
+        let vehicles = Array.from({ length: 6 }, () => ({
             ...getRandomLocation(),
             placa: getRandomPlate(),
             nome: getRandomName(),
             veiculo: getRandomVehicle(),
         }));
+        <?php endif; ?>
 
         vehicles.forEach(vehicle => {
             const marker = new google.maps.Marker({
@@ -106,7 +100,6 @@
             });
         });
 
-        <?php endif; ?>
     }
 
     window.initMap = initMap;

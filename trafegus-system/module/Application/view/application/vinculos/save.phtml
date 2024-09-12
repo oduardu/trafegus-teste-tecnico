@@ -6,7 +6,7 @@
                 <label for="placa">Veículo</label>
                 <select id="placa" name="placa" class="form-control">
                     <option selected disabled>Selecionar...</option>
-                    <?php foreach ($this->vehicle as $vehicle): ?>
+                    <?php foreach ($this->vehicles as $vehicle): ?>
                         <option value="<?php echo $vehicle['placa'] ?>"><?php echo "{$vehicle['placa']} - ({$vehicle['marca']}) {$vehicle['modelo']}"?></option>
                     <?php endforeach; ?>
                 </select>
@@ -27,25 +27,4 @@
     </form>
 </div>
 
-<script>
-    jQuery(document).ready(function() {
-        jQuery('#bondForm').on('submit', function(event) {
-            event.preventDefault();
-            jQuery.ajax({
-                url: $(this).attr('action'),
-                method: 'POST',
-                data: $(this).serialize(),
-                success: function(response) {
-                    if (response.success) {
-                        alert('Vínculo salvo com sucesso!');
-                    } else {
-                        alert('Erro ao salvar Vínculo: ' + response.message);
-                    }
-                },
-                error: function() {
-                    alert('Erro ao processar a solicitação.');
-                }
-            });
-        });
-    });
-</script>
+<script src="/js/application/vinculos/save.js"></script>

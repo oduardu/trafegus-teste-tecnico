@@ -16,54 +16,28 @@
             </tr>
         </thead>
         <tbody>
-            <?php
-            if(empty($this->vehicles)) :
-                echo '<tr><td colspan="6" class="text-center">Nenhum veículo cadastrado</td></tr>';
-            else:
-                foreach ($this->vehicles as $vehicle): ?>
+            <?php foreach ($this->vehicles as $vehicle): ?>
                     <tr>
-                        <td><?= $vehicle['placa'] ?></td>
-                        <td><?= $vehicle['modelo'] ?></td>
-                        <td><?= $vehicle['marca'] ?></td>
-                        <td><?= $vehicle['ano'] ?></td>
-                        <td><?= $vehicle['cor'] ?></td>
-                        <td><?= implode('<br>', $vehicle['drivers']) ?></td>
+                        <td><?php echo $vehicle['placa'] ?></td>
+                        <td><?php echo $vehicle['modelo'] ?></td>
+                        <td><?php echo $vehicle['marca'] ?></td>
+                        <td><?php echo $vehicle['ano'] ?></td>
+                        <td><?php echo $vehicle['cor'] ?></td>
+                        <td><?php echo implode('<br>', $vehicle['drivers']) ?></td>
                         <td class="d-flex justify-content-center">
-                            <button class="btn btn-primary btn-sm mr-2" onclick="window.location.href='/vehicles/save/placa/<?= $vehicle['placa'] ?>'">Editar</button>
-                            <button class="btn btn-danger btn-sm mr-2 delete" href="/vehicles/delete" data-placa="<?= $vehicle['placa'] ?>">Deletar</button>
-                            <button class="btn btn-secondary btn-sm mr-2 vincular" href="/vinculos/placa/<?php echo $vehicle['placa']?>">Vincular Motorista</button>
+                            <button class="btn btn-primary btn-sm mr-2" onclick="window.location.href='/vehicles/save?placa=<?php echo $vehicle['placa'] ?>'">Editar</button>
+                            <button class="btn btn-danger btn-sm mr-2 delete" href="/vehicles/delete" data-placa="<?php echo $vehicle['placa'] ?>">Deletar</button>
                         </td>
                     </tr>
-            <?php
-                endforeach;
-            endif;
-            ?>
+            <?php endforeach; ?>
+            <?php if (empty($this->vehicles)): ?>
+                <tr>
+                    <td colspan="8" class="text-center">Nenhum vínculo encontrado.</td>
+                </tr>
+            <?php endif; ?>
         </tbody>
     </table>
 </div>
 
-<script>
-    $(document).ready(function() {
-        $('.delete').on('click', function(event) {
-            event.preventDefault();
-            $.ajax({
-                url: $(this).attr('href'),
-                method: 'POST',
-                data: {
-                    placa: $(this).data('placa')
-                },
-                success: function(response) {
-                    if (response.success) {
-                        alert('Veículo deletado com sucesso!');
-                    } else {
-                        alert('Erro ao deletar veículo: ' + response.message);
-                    }
-                },
-                error: function(data) {
-                    console.log(data)
-                    alert('Erro ao processar a solicitação.');
-                }
-            });
-        });
-    });
-</script>
+
+<script src="/js/application/vehicles/index.js"></script>

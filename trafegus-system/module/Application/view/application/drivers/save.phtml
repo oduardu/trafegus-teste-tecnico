@@ -1,0 +1,31 @@
+<div class="container">
+    <h1 class="text-center mb-4">Cadastrar Motorista</h1>
+    <form id="vehicleForm" method="post" action="/drivers/save">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="cpf">CPF:</label>
+                <input id="cpf" class="form-control" name="cpf" value="<?php echo $this->driver['cpf'] ?>" <?php echo (isset($this->driver)) ? 'type="hidden"' : 'type="number"' ?> required>
+                <p id="cpf"><?php echo $this->driver['cpf'] ?></p>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="rg">RG</label>
+                <input type="number" class="form-control" id="rg" name="rg" value="<?php echo $this->driver['rg'] ?>" >
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="nome">Nome</label>
+                <input type="text" class="form-control" id="nome" name="nome" value="<?php echo $this->driver['nome'] ?>" required>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="telefone">Telefone</label>
+                <input type="number" class="form-control" id="telefone" name="telefone" value="<?php echo $this->driver['telefone'] ?>" required>
+            </div>
+            <div class="form-group col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-success w-100">Salvar</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="/js/application/drivers/save.js"></script>
