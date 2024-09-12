@@ -13,7 +13,7 @@ CREATE TABLE vehicles (
       marca VARCHAR(20) NOT NULL,
       ano INTEGER NOT NULL,
       cor VARCHAR(20) NOT NULL,
-      PRIMARY KEY (placa, renavam)
+      PRIMARY KEY (placa)
 );
 
 CREATE TABLE driver_vehicle (
