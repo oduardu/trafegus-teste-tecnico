@@ -17,7 +17,8 @@ class BondVehiclesAndDrivers
     protected $driver_cpf;
 
     /**
-     * @ORM\Column(type="string", length=30, nullable=true, unique=true)
+     * @ORM\Id
+     * @ORM\Column(type="string", length=30, nullable=false, unique=true)
      */
     protected $vehicle_placa;
 
@@ -40,4 +41,8 @@ class BondVehiclesAndDrivers
         $this->vehicle_placa = $placa;
     }
 
+    public function toArr()
+    {
+        return get_object_vars($this);
+    }
 }

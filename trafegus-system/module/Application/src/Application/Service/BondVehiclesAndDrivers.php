@@ -3,18 +3,12 @@
 namespace Application\Service;
 
 use Core\Interfaces\Service\CrudServiceInterface;
+use Core\Service\AbstractService;
 use Zend\ServiceManager\ServiceManager;
 use Zend\ServiceManager\ServiceManagerAwareInterface;
 
-class BondVehiclesAndDrivers implements ServiceManagerAwareInterface, CrudServiceInterface
+class BondVehiclesAndDrivers extends AbstractService implements CrudServiceInterface
 {
-
-    protected $serviceManager;
-
-    public function setServiceManager(ServiceManager $serviceManager)
-    {
-        $this->serviceManager = $serviceManager;
-    }
 
     public function find($data)
     {
@@ -22,7 +16,7 @@ class BondVehiclesAndDrivers implements ServiceManagerAwareInterface, CrudServic
 
             $this->dataValidator($data);
 
-            $entity = $this->serviceManager->get('Doctrine\ORM\EntityManager')->find(\Application\Model\BondVehiclesAndDrivers::class, ['cpf' => $data['cpf'], 'placa' => $data['placa']]);
+            $entity = $this->getService('Doctrine\ORM\EntityManager')->find(\Application\Model\BondVehiclesAndDrivers::class, ['driver_cpf' => $data['cpf'], 'vehicle_placa' => $data['placa']]);
 
             if (!$entity) {
                 throw new \Exception('Vínculo não encontrado.');
@@ -37,10 +31,20 @@ class BondVehiclesAndDrivers implements ServiceManagerAwareInterface, CrudServic
         }
     }
 
-    public function findAll()
+    public function findAll($array = false)
     {
         try {
-            $entities = $this->serviceManager->get('Doctrine\ORM\EntityManager')->getRepository(\Application\Model\BondVehiclesAndDrivers::class)->findAll();
+            $entities = $this->getService('Doctrine\ORM\EntityManager')->getRepository(\Application\Model\BondVehiclesAndDrivers::class)->findAll();
+
+            if ($array) {
+                $arrayEntities = [];
+
+                foreach ($entities as $entity) {
+                    $arrayEntities[] = $entity->toArr();
+                }
+
+                return $arrayEntities;
+            }
 
             return $entities;
         } catch (\Exception $e) {
@@ -56,25 +60,26 @@ class BondVehiclesAndDrivers implements ServiceManagerAwareInterface, CrudServic
         try {
             $this->dataValidator($data);
 
-            $driver = $this->serviceManager->get(\Application\Service\DriverService::class)->find($data['cpf']);
+            $driver = $this->getService(\Application\Service\DriverService::class)->find($data['cpf']);
 
-            if (isset($driver['success']) && !$driver['success']) {
+            if (is_array($driver) && !$driver['success']) {
                 throw new \Exception('Motorista não encontrado.');
             }
 
-            $vehicle = $this->serviceManager->get(\Application\Service\VehicleService::class)->find($data['placa']);
+            $vehicle = $this->getService(\Application\Service\VehicleService::class)->find($data['placa']);
 
-            if (isset($vehicle['success']) && !$vehicle['success']) {
+            if (is_array($vehicle) && !$vehicle['success']) {
                 throw new \Exception('Veículo não encontrado.');
             }
 
             $bond = new \Application\Model\BondVehiclesAndDrivers();
 
-            $bond->setCpf($data['cpf']);
-            $bond->setCpf($data['placa']);
+            $bond->setDriverCpf($data['cpf']);
+            $bond->setVehiclePlaca($data['placa']);
 
-            $this->serviceManager->get('Doctrine\ORM\EntityManager')->persist($bond);
-            $this->serviceManager->get('Doctrine\ORM\EntityManager')->flush();
+            $EntityManager = $this->getService('Doctrine\ORM\EntityManager');
+            $EntityManager->persist($bond);
+            $EntityManager->flush();
 
             return [
                 'success' => true,
@@ -93,23 +98,27 @@ class BondVehiclesAndDrivers implements ServiceManagerAwareInterface, CrudServic
         try {
             $this->dataValidator($data);
 
-            $driver = $this->serviceManager->get(\Application\Service\DriverService::class)->find($data['cpf']);
+            $driver = $this->getService(\Application\Service\DriverService::class)->find($data['cpf']);
 
-            if (isset($driver['success']) && !$driver['success']) {
+            if (is_array($driver) && !$driver['success']) {
                 throw new \Exception('Motorista não encontrado.');
             }
 
-            $vehicle = $this->serviceManager->get(\Application\Service\VehicleService::class)->find($data['placa']);
+            $vehicle = $this->getService(\Application\Service\VehicleService::class)->find($data['placa']);
 
-            if (isset($vehicle['success']) && !$vehicle['success']) {
+            if (is_array($vehicle) && !$vehicle['success']) {
                 throw new \Exception('Veículo não encontrado.');
             }
 
 
-            $bond = $this->find($data);
+            $bond = $this->find([
+                'cpf' => $data['cpf'],
+                'placa' => $data['placa']
+            ]);
 
-            $this->serviceManager->get('Doctrine\ORM\EntityManager')->remove($bond);
-            $this->serviceManager->get('Doctrine\ORM\EntityManager')->flush();
+            $EntityManager = $this->getService('Doctrine\ORM\EntityManager');
+            $EntityManager->remove($bond);
+            $EntityManager->flush();
 
             return [
                 'success' => true,
@@ -121,6 +130,20 @@ class BondVehiclesAndDrivers implements ServiceManagerAwareInterface, CrudServic
                 'message' => $e->getMessage()
             ];
         }
+    }
+
+    public function findAllBondWithInfo()
+    {
+        $select = new \Doctrine\DBAL\Query\QueryBuilder($this->getService('Doctrine\ORM\EntityManager')->getConnection());
+
+        $select->select('d.cpf', 'd.nome', 'v.placa', 'v.modelo', 'v.marca')
+            ->from('driver_vehicle')
+            ->join('driver_vehicle', 'drivers', 'd', 'driver_vehicle.driver_cpf = d.cpf')
+            ->join('driver_vehicle', 'vehicles', 'v', 'driver_vehicle.vehicle_placa = v.placa');
+
+        $result = $select->execute()->fetchAll();
+
+        return $result;
     }
 
     private function dataValidator(array $data)
