@@ -154,7 +154,40 @@ Utilizando Zend Framework 2, Doctrine2, JQuery e outros recursos de sua preferê
 
 ##### BONUS: Criar uma tela com um mapa utilizando Google Maps e inserir dentro do mapa alguns Markers com InfoWindows contendo Placa do veículo e Nome do motorista (Dados fixos no código).
 
-
-
-
 Para o CRUD, realizar a criação do BD e tabelas localmente e enviar os scripts SQL.
+
+
+## Como Executar
+
+### Instalação
+
+1. Clone o repositório
+```bash
+  git clone https://github.com/oduardu/trafegus-teste-tecnico.git
+```
+
+2. Criar o arquivo .env e preencha com as inforamções necessárias
+```bash
+  cp .env.example .env
+```
+
+3. Suba o container do banco de dados
+```bash
+  docker-compose --env-file .env -f database/docker-compose.yml up -D
+```
+
+4. Instale as dependências
+```bash
+  cd trafegus-system; composer install
+```
+
+5. Crie o arquivo `doctrine_orm.local.php` em `config/autoload/` e preencha com as informações do banco de dados baseado no arquivo `doctrine_orm.local.php.dist`
+
+
+6. Altere a sua API_GOOGLE_KEY (Api do google Maps) no arquivo `config/autoload/global.php`
+
+
+7. Execute o php server
+```bash
+  php -S 0.0.0.0:8080 -t public/ public/index.php
+``` 
