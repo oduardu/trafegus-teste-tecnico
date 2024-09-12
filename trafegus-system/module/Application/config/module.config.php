@@ -48,6 +48,20 @@ return [
                     ],
                 ],
             ],
+            'vinculos' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route'    => '/vinculos[/:action[/:params]]',
+                    'constraints' => [
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'params' => '.*',
+                    ],
+                    'defaults' => [
+                        'controller' => \Application\Controller\VinculosController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+            ],
         ],
     ],
     'service_manager' => [
@@ -58,6 +72,7 @@ return [
         'factories' => [
             \Application\Service\DriverService::class => \Application\Factory\DriverServiceFactory::class,
             \Application\Service\VehicleService::class => \Application\Factory\VehicleServiceFactory::class,
+            \Application\Service\BondVehiclesAndDrivers::class => \Application\Factory\BondVehiclesAndDriversServiceFactory::class,
         ],
     ],
     'translator' => [
@@ -87,6 +102,12 @@ return [
             \Application\Controller\DriversController::class => function($container) {
                 $parentLocator = $container->getServiceLocator();
                 return new \Application\Controller\DriversController(
+                    $parentLocator->get(\Doctrine\ORM\EntityManager::class)
+                );
+            },
+            \Application\Controller\VinculosController::class => function($container) {
+                $parentLocator = $container->getServiceLocator();
+                return new \Application\Controller\VinculosController(
                     $parentLocator->get(\Doctrine\ORM\EntityManager::class)
                 );
             },
