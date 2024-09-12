@@ -54,7 +54,6 @@ class VehiclesController extends DefaultController
 
     public function deleteAction()
     {
-
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost()->toArray();
@@ -62,7 +61,7 @@ class VehiclesController extends DefaultController
 
             if (!empty($placa)) {
                 $response = $this->getService(\Application\Service\VehicleService::class)->remove($placa);
-                debug($response);
+
                 return $this->resJson($response);
             }
         }
