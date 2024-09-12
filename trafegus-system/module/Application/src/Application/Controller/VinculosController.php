@@ -6,24 +6,20 @@ use Core\Controller\DefaultController;
 
 class VinculosController extends DefaultController
 {
+
+    public function indexAction()
+    {
+        $bonds = $this->getService(\Application\Service\BondVehiclesAndDrivers::class)->findAllBondWithInfo();
+
+        return viewModel(null, [
+            'bonds' => $bonds
+        ]);
+    }
+
     public function saveAction()
     {
-        $placa = $this->params()->fromRoute('placa', null);
-        $cpf = $this->params()->fromRoute('cpf', null);
-
-//        $vehicles = $this->getService(\Application\Service\VehicleService::class)->findAll();
-//
-//        if (isset($vehicles['success']) && !$vehicles['success']) {
-//            return $this->resJson($vehicles);
-//        }
-//
-//        $drivers = $this->getService(\Application\Service\DriverService::class)->findAll();
-//
-//        if (isset($drivers['success']) && !$drivers['success']) {
-//            return $this->resJson($drivers);
-//        }
-
         $request = $this->getRequest();
+
         if ($request->isPost()) {
             $data = $request->getPost()->toArray();
             $response = $this->getService(\Application\Service\BondVehiclesAndDrivers::class)->save($data);
@@ -31,13 +27,21 @@ class VinculosController extends DefaultController
             return $this->resJson($response);
         }
 
+        $vehicles = $this->getService(\Application\Service\VehicleService::class)->findAll(true);
+
+        if (isset($vehicles['success']) && !$vehicles['success']) {
+            return $this->resJson($vehicles);
+        }
+
+        $drivers = $this->getService(\Application\Service\DriverService::class)->findAll(true);
+
+        if (isset($drivers['success']) && !$drivers['success']) {
+            return $this->resJson($drivers);
+        }
+
         return viewModel(null,[
-//            'vehicle' => $vehicles->toArray() ?? [],
-//            'drivers' => $drivers->toArray() ?? [],
-            'vehicle' => [],
-            'drivers' => [],
-            'placa' => $placa,
-            'cpf' => $cpf,
+            'drivers' => $drivers,
+            'vehicles' => $vehicles,
         ]);
     }
 
