@@ -134,17 +134,20 @@ return [
             'routes' => [],
         ],
     ],
-    'doctrine' => [
-        'driver' => [
-            'application_entities' => [
-                'class' => \Doctrine\ORM\Mapping\Driver\AnnotationDriver::class,
-                'paths' => [__DIR__ . '/../src/Application/Model']
-            ],
-            'orm_default' => [
-                'drivers' => [
-                    'Application\Model' => 'application_entities'
-                ]
-            ]
-        ]
-    ]
+    'doctrine' => array(
+        'driver' => array(
+            'pgsql' => array(
+                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+                'cache' => 'array',
+                'paths' => array(
+                    __DIR__ . "/src/Application/Model"
+                ),
+            ),
+            'orm_default' => array(
+                'drivers' => array(
+                    'Application\Model' => 'pgsql'
+                )
+            )
+        )
+    )
 ];

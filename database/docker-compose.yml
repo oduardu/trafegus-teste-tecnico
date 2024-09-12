@@ -3,9 +3,9 @@ services:
     image: postgres:latest
     container_name: trafegus-db
     environment:
-      POSTGRES_USER: trafegus
-      POSTGRES_PASSWORD: trafegus
-      POSTGRES_DB: drivers
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init:/docker-entrypoint-initdb.d

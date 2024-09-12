@@ -16,6 +16,5 @@ return array(
         'factories' => array(
         )
     ),
-    //doctrine
-
+    'API_GOOGLE_KEY' => 'YOUR_API_KEY',
 );
