@@ -3,29 +3,21 @@
 namespace Application\Service;
 
 use Core\Interfaces\Service\CrudServiceInterface;
-use Zend\ServiceManager\ServiceManager;
-use Zend\ServiceManager\ServiceManagerAwareInterface;
+use Core\Service\AbstractService;
 
-class DriverService implements ServiceManagerAwareInterface, CrudServiceInterface
+class DriverService extends AbstractService implements CrudServiceInterface
 {
 
-    protected $serviceManager;
-
-    public function setServiceManager(ServiceManager $serviceManager)
-    {
-        $this->serviceManager = $serviceManager;
-    }
-
-    public function find($cpf)
+    public function find($cpf, $array = false)
     {
         try {
-            $entity = $this->serviceManager->get('Doctrine\ORM\EntityManager')->find(\Application\Model\Drivers::class, $cpf);
+            $entity = $this->getService('Doctrine\ORM\EntityManager')->find(\Application\Model\Drivers::class, $cpf);
 
             if (!$entity) {
                 throw new \Exception('Motorista não encontrado.');
             }
 
-            return $entity;
+            return $array ? $entity->toArr() : $entity;
         } catch (\Exception $e) {
             return [
                 'success' => false,
@@ -34,10 +26,20 @@ class DriverService implements ServiceManagerAwareInterface, CrudServiceInterfac
         }
     }
 
-    public function findAll()
+    public function findAll($array = false)
     {
         try {
-            $entities = $this->serviceManager->get('Doctrine\ORM\EntityManager')->getRepository(\Application\Model\Drivers::class)->findAll();
+            $entities = $this->getService('Doctrine\ORM\EntityManager')->getRepository(\Application\Model\Drivers::class)->findAll();
+
+            if ($array) {
+                $arrayEntities = [];
+
+                foreach ($entities as $entity) {
+                    $arrayEntities[] = $entity->toArr();
+                }
+
+                return $arrayEntities;
+            }
 
             return $entities;
         } catch (\Exception $e) {
@@ -55,7 +57,7 @@ class DriverService implements ServiceManagerAwareInterface, CrudServiceInterfac
 
             $driver = $this->find($data['cpf']);
 
-            if (isset($driver['success']) && !$driver['success']) {
+            if (is_array($driver) && !$driver['success']) {
                 $driver = new \Application\Model\Drivers();
                 $driver->setCpf($data['cpf']);
             }
@@ -64,8 +66,10 @@ class DriverService implements ServiceManagerAwareInterface, CrudServiceInterfac
             $driver->setNome($data['nome']);
             $driver->setTelefone($data['telefone']);
 
-            $this->serviceManager->get('Doctrine\ORM\EntityManager')->persist($driver);
-            $this->serviceManager->get('Doctrine\ORM\EntityManager')->flush();
+
+            $EntityManager = $this->getService('Doctrine\ORM\EntityManager');
+            $EntityManager->persist($driver);
+            $EntityManager->flush();
 
             return [
                 'success' => true,
@@ -84,8 +88,8 @@ class DriverService implements ServiceManagerAwareInterface, CrudServiceInterfac
         try {
             $driver = $this->find($cpf);
 
-            $this->serviceManager->get('Doctrine\ORM\EntityManager')->remove($driver);
-            $this->serviceManager->get('Doctrine\ORM\EntityManager')->flush();
+            $this->getService('Doctrine\ORM\EntityManager')->remove($driver);
+            $this->getService('Doctrine\ORM\EntityManager')->flush();
 
             return [
                 'success' => true,
@@ -97,6 +101,36 @@ class DriverService implements ServiceManagerAwareInterface, CrudServiceInterfac
                 'message' => $e->getMessage()
             ];
         }
+    }
+
+    public function searchDriversInfo()
+    {
+        $drivers = $this->findAll(true);
+        $vehicles = $this->getService(\Application\Service\VehicleService::class)->findAll(true);
+
+        $drivers = array_combine(
+            array_map(function($drivers) {
+                return $drivers['cpf'];
+            }, $drivers),
+            $drivers
+        );
+
+        $vehicles = array_combine(
+            array_map(function($vehicle) {
+                return $vehicle['placa'];
+            }, $vehicles),
+            $vehicles
+        );
+
+        $bonds = $this->getService(\Application\Service\BondVehiclesAndDrivers::class)->findAll(true);
+
+        foreach ($bonds as $bond) {
+            if(isset($drivers[$bond['driver_cpf']])) {
+                $drivers[$bond['driver_cpf']]['vehicles'][] = "({$vehicles[$bond['vehicle_placa']]['placa']}) - {$vehicles[$bond['vehicle_placa']]['marca']} {$vehicles[$bond['vehicle_placa']]['modelo']}";
+            };
+        }
+
+        return $drivers;
     }
 
     private function dataValidator(array $data)

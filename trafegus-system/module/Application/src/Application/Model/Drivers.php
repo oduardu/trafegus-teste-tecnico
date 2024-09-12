@@ -71,4 +71,9 @@ class Drivers
         $this->telefone = $telefone;
     }
 
+    public function toArr()
+    {
+        return get_object_vars($this);
+    }
+
 }
