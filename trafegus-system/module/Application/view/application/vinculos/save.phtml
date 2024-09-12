@@ -1,0 +1,51 @@
+<div class="container">
+    <h1 class="text-center mb-4">Criar Vínculo</h1>
+    <form id="bondForm" method="post" action="/vinculos/save">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="placa">Veículo</label>
+                <select id="placa" name="placa" class="form-control">
+                    <option selected disabled>Selecionar...</option>
+                    <?php foreach ($this->vehicle as $vehicle): ?>
+                        <option value="<?php echo $vehicle['placa'] ?>"><?php echo "{$vehicle['placa']} - ({$vehicle['marca']}) {$vehicle['modelo']}"?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="modelo">Motorista</label>
+                <select id="cpf" name="cpf" class="form-control">
+                    <option selected disabled>Selecionar...</option>
+                    <?php foreach ($this->drivers as $driver): ?>
+                        <option value="<?php echo $driver['cpf'] ?>"><?php echo "{$driver['cpf']} - {$driver['nome']}"?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="form-group col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-success w-100">Salvar</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    jQuery(document).ready(function() {
+        jQuery('#bondForm').on('submit', function(event) {
+            event.preventDefault();
+            jQuery.ajax({
+                url: $(this).attr('action'),
+                method: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        alert('Vínculo salvo com sucesso!');
+                    } else {
+                        alert('Erro ao salvar Vínculo: ' + response.message);
+                    }
+                },
+                error: function() {
+                    alert('Erro ao processar a solicitação.');
+                }
+            });
+        });
+    });
+</script>

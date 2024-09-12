@@ -31,6 +31,7 @@
                         <td class="d-flex justify-content-center">
                             <button class="btn btn-primary btn-sm mr-2" onclick="window.location.href='/vehicles/save/placa/<?= $vehicle['placa'] ?>'">Editar</button>
                             <button class="btn btn-danger btn-sm mr-2 delete" href="/vehicles/delete" data-placa="<?= $vehicle['placa'] ?>">Deletar</button>
+                            <button class="btn btn-secondary btn-sm mr-2 vincular" href="/vinculos/placa/<?php echo $vehicle['placa']?>">Vincular Motorista</button>
                         </td>
                     </tr>
             <?php
